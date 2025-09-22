@@ -50,7 +50,7 @@ pipeline {
             steps {
                 echo "Deploying branch ${env.BRANCH_NAME} on port ${APP_PORT}..."
                
-                sh "docker rm -f IMAGE_TAG || true"
+                sh "docker rm -f ${IMAGE_TAG} || true"
                 
                 sh "docker run -d -p ${APP_PORT}:3000 --name myapp-${env.BRANCH_NAME} ${IMAGE_TAG}"
             }
