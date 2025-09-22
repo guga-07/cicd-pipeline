@@ -54,7 +54,7 @@ pipeline {
                
                 sh "docker rm -f ${CONTAINER_NAME} || true"
                 
-                sh "docker run -d -p ${APP_PORT}:3000 --name myapp-${env.BRANCH_NAME} ${IMAGE_TAG}"
+                sh "docker run -d -p ${APP_PORT}:3000 --name ${CONTAINER_NAME } ${IMAGE_TAG}"
             }
         }
     }
