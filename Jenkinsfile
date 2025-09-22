@@ -13,9 +13,11 @@ pipeline {
                    
                     if (env.BRANCH_NAME == 'main') {
                         APP_PORT = '3000'
+                        CONTAINER_NAME = 'nodemain'
                         IMAGE_TAG = 'nodemain:v1.0'
                     } else if (env.BRANCH_NAME == 'dev') {
                         APP_PORT = '3001'
+                        CONTAINER_NAME = 'nodedev'
                         IMAGE_TAG = 'nodedev:v1.0'
                     } else {
                         error "Unknown branch ${env.BRANCH_NAME}"
@@ -50,9 +52,9 @@ pipeline {
             steps {
                 echo "Deploying branch ${env.BRANCH_NAME} on port ${APP_PORT}..."
                
-                sh "docker rm -f myapp-${env.BRANCH_NAME} || true"
+                sh "docker rm -f ${CONTAINER_NAME} || true"
                 
-                sh "docker run -d -p ${APP_PORT}:3000 --name myapp-${env.BRANCH_NAME} ${IMAGE_TAG}"
+                sh "docker run -d -p ${APP_PORT}:3000 --name ${CONTAINER_NAME} ${IMAGE_TAG}"
             }
         }
     }
