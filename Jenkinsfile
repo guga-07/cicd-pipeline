@@ -11,16 +11,17 @@ pipeline {
                 checkout scm
                 script {
                    
-                    if (env.BRANCH_NAME == 'main') {
-                        APP_PORT = '3000'
-                        CONTAINER_NAME = "node${env.BRANCH_NAME}"
-                        IMAGE_TAG = '${CONTAINER_NAME}:v1.0'
-                    } else if (env.BRANCH_NAME == 'dev') {
-                        APP_PORT = '3001'
-                        CONTAINER_NAME = "node${env.BRANCH_NAME}"
-                        IMAGE_TAG = '${CONTAINER_NAME}:v1.0'
-                    } else {
-                        error "Unknown branch ${env.BRANCH_NAME}"
+                   script {
+                       if (env.BRANCH_NAME == 'main') {
+                           APP_PORT = '3000'
+                           CONTAINER_NAME = "node${env.BRANCH_NAME}"
+                           IMAGE_TAG = "node${env.BRANCH_NAME}:v1.0"
+                       } else if (env.BRANCH_NAME == 'dev') {
+                           APP_PORT = '3001'   // optional: different port for dev
+                           CONTAINER_NAME = "node${env.BRANCH_NAME}"
+                           IMAGE_TAG = "node${env.BRANCH_NAME}:v1.0"
+                       } else {
+                           error "Unknown branch ${env.BRANCH_NAME}"
                     }
                     echo "Branch: ${env.BRANCH_NAME}, Port: ${APP_PORT}, Image: ${IMAGE_TAG}"
                 }
