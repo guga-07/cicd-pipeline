@@ -2,21 +2,25 @@ pipeline {
     agent any
     environment {
         APP_PORT = ''
+        IMAGE_TAG = ''
     }
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the current branch
+               
                 checkout scm
                 script {
-                    // Set port based on branch
+                   
                     if (env.BRANCH_NAME == 'main') {
                         APP_PORT = '3000'
+                        IMAGE_TAG = 'nodemain:v1.0'
                     } else if (env.BRANCH_NAME == 'dev') {
                         APP_PORT = '3001'
+                        IMAGE_TAG = 'nodedev:v1.0'
                     } else {
                         error "Unknown branch ${env.BRANCH_NAME}"
                     }
+                    echo "Branch: ${env.BRANCH_NAME}, Port: ${APP_PORT}, Image: ${IMAGE_TAG}"
                 }
             }
         }
@@ -37,18 +41,18 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                echo "Building Docker image..."
-                sh "docker build -t myapp:${env.BRANCH_NAME} ."
+                echo "Building Docker image ${IMAGE_TAG}..."
+                sh "docker build -t ${IMAGE_TAG} ."
             }
         }
 
         stage('Deploy') {
             steps {
                 echo "Deploying branch ${env.BRANCH_NAME} on port ${APP_PORT}..."
-                // Remove any existing container
+               
                 sh "docker rm -f myapp-${env.BRANCH_NAME} || true"
-                // Run new container
-                sh "docker run -d -p ${APP_PORT}:3000 --name myapp-${env.BRANCH_NAME} myapp:${env.BRANCH_NAME}"
+                
+                sh "docker run -d -p ${APP_PORT}:3000 --name myapp-${env.BRANCH_NAME} ${IMAGE_TAG}"
             }
         }
     }
